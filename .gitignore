@@ -1,5 +1,5 @@
 # macOS Files
-.DS_Store
+**/.DS_Store
 
 # scratch files
 /scraper.ipynb
