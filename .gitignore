@@ -3,6 +3,8 @@
 
 # checkpoints
 .ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
 # scratch files
 /scraper.ipynb
+.ipynb_checkpoints/data_collection-checkpoint.ipynb

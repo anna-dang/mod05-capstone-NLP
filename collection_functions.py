@@ -115,25 +115,28 @@ def get_url_list(start_url, n=2):
 
 def parse_url_list(url_list):
     
-    # returns location as ttuple (hotel, city, state)
+    # returns location as tuple (hotel, city, state)
     
     all_reviews = []
     all_ratings = []
     all_titles = []
 
     for idx, page in enumerate(url_list):
+
         # get location just once with parse of first url
         if idx == 0:
             page_one_reviews, page_one_ratings, page_one_titles, location = parse_url(page, location=True)
             all_reviews.extend(page_one_reviews)
             all_ratings.extend(page_one_ratings)
             all_titles.extend(page_one_titles)
-        # retrive rest of ratigns, location defaults to false
+
+        # retrive rest of ratings, location defaults to false
         else:    
             page_reviews, page_ratings, page_titles = parse_url(page)
             all_reviews.extend(page_reviews)
             all_ratings.extend(page_ratings)
             all_titles.extend(page_titles)
+            #sleep(1)
     
     return all_reviews, all_ratings, all_titles, location
 
