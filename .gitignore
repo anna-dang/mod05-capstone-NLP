@@ -1,6 +1,8 @@
 # macOS Files
 **/.DS_Store
 
+# checkpoints
+.ipynb_checkpoints
+
 # scratch files
 /scraper.ipynb
-/data_collection.ipynb
