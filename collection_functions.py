@@ -1,10 +1,23 @@
-### WORK IN PROGRESS ###
+### WORK IN PROGRESS ### Pardon the current notes/lack of formal docstrings
 
 import requests
 import pandas as pd
+
 from bs4 import BeautifulSoup
+from selenium import webdriver
 from time import sleep
 from re import compile
+
+
+def get_driver():
+     # selenium chrome driver
+    options = webdriver.ChromeOptions()
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--incognito')
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(executable_path='./driver/chromedriver', options=options)
+    return driver
+
 
 
 def retrieve_reviews_ratings(soup):
@@ -57,18 +70,42 @@ def retrieve_location(soup):
 
 
 
-def parse_url(start_url_ext,  location=False):
+def parse_url(start_url_ext, webdriver, location=False):
     """No pagination, single page
         returns location as (hotel, city, state"""
-    root = "https://www.tripadvisor.com"
-    html = requests.get(root + start_url_ext)
-    soup = BeautifulSoup(html.content, 'html.parser')
+    domain = "https://www.tripadvisor.com"
+
+    # get website
+    webdriver.get(domain + start_url_ext)
+
+    # Added to deal with errors 1/12, try to expand, otherwise just keep going
+    try:
+        # find the 'read more' buttons        
+        more_buttons = webdriver.find_elements_by_class_name("_3maEfNCR")
+
+        # ACTIVATE buttons, only need to press the first more button to access all!!, 
+        # so just press one, once pressed they no longer exist
+        if more_buttons[0].is_displayed():
+            webdriver.execute_script("arguments[0].click();", more_buttons[0])
+            sleep(1)
+
+    except:
+        continue
+
+    # set soup    
+    page_source = webdriver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
+
+    # scrape the ratings data
     page_reviews, page_ratings, page_titles = retrieve_reviews_ratings(soup)
+
+    # if location data requested
     if location == False:
         return page_reviews, page_ratings, page_titles
     else:
         location = retrieve_location(soup)
         return page_reviews, page_ratings, page_titles, location
+
 
 
 
@@ -113,10 +150,17 @@ def get_url_list(start_url, n=2):
 
 
 
-def parse_url_list(url_list):
+def parse_url_list(url_list, webdriver=None):
     
     # returns location as tuple (hotel, city, state)
-    
+
+    # set driver for all urls to use, call new one if one  not passed in
+    if not webdriver:
+        driver = get_driver()
+    else:
+        driver = webdriver
+
+    # set storage lists
     all_reviews = []
     all_ratings = []
     all_titles = []
@@ -125,20 +169,22 @@ def parse_url_list(url_list):
 
         # get location just once with parse of first url
         if idx == 0:
-            page_one_reviews, page_one_ratings, page_one_titles, location = parse_url(page, location=True)
+            page_one_reviews, page_one_ratings, page_one_titles, location = parse_url(page, webdriver=driver, location=True)
             all_reviews.extend(page_one_reviews)
             all_ratings.extend(page_one_ratings)
             all_titles.extend(page_one_titles)
 
         # retrive rest of ratings, location defaults to false
         else:    
-            page_reviews, page_ratings, page_titles = parse_url(page)
+            page_reviews, page_ratings, page_titles = parse_url(page, webdriver=driver)
             all_reviews.extend(page_reviews)
             all_ratings.extend(page_ratings)
             all_titles.extend(page_titles)
             #sleep(1)
     
     return all_reviews, all_ratings, all_titles, location
+
+
 
 
 def make_reviews_df(reviews, ratings, titles, location=None):
@@ -158,59 +204,21 @@ def make_reviews_df(reviews, ratings, titles, location=None):
 
 
 
-def scrape_hotel(start_url, n=2):
+def scrape_hotel(start_url, n=2, webdriver=None):
    
     # generate list to scrape
     url_list = get_url_list(start_url, n=n)
 
-    # parse all urls for reviews and ratings    
-    all_reviews, all_ratings, all_titles, location = parse_url_list(url_list)
+    if webdriver:
+        driver = webdriver
 
+        # parse all urls for reviews and ratings
+        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list, webdriver=driver)
+    
+    else:
+        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list)
+
+    # build df
     hotel_df = make_reviews_df(all_reviews, all_ratings, all_titles, location)
+    
     return hotel_df
-
-
-
-
-
-
-# def get_next_page_ext(soup):
-#     """For 
-
-#     Args:
-#         soup (bs4.BeautifulSoup parser): [description]
-
-#     Returns:
-#         [str]: [description]
-#     """
-
-#     next_page_link = soup.find('a', class_=compile("ui_button nav next (.*)"))
-#     if next_page_link:
-#         return next_page_link['href']
-#     else:
-#         return None
-
-# from time import sleep
-
-# returns results from all pages using "next" button  
-# # this one is blasting out and being rejected????   
-# def parse_url_pages(start_url, reviews=[], ratings=[], quiet=False):
-#     root = "https://www.tripadvisor.com"
-#     sleep(5)
-#     html = requests.get(root + start_url)
-#     sleep(5)
-#     soup = BeautifulSoup(html.content, 'html.parser')
-#     page_reviews, page_ratings = retrieve_reviews_ratings(soup)
-#     reviews += page_reviews
-#     ratings += page_ratings
-#     next_ext = get_next_page_ext(soup)
-#     i = 1
-#     if next_ext:  # if next_ext exists, i.e. not at end of pages yet
-#         if quiet == False:
-#             print("Page:", i, next_ext)
-#         next_url = root + next_ext
-#         i += 1
-#         return parse_url(next_url, reviews, ratings)
-#         # recursive, calls on self to continue with function to parse on NEXT page
-#     else: # at end of pages, stop looping, return final lists
-#         return reviews, ratings
