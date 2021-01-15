@@ -1,4 +1,3 @@
-### WORK IN PROGRESS ### Pardon the current notes/lack of formal docstrings
 import pandas as pd
 
 from bs4 import BeautifulSoup
@@ -177,14 +176,6 @@ def get_url_list(start_url, n=2):
     Returns:
         page_urls : List of URLs in increasing order from given homepage
     """
-
-    start_url - trip advisor hotel page ONE ONLY!!!!! not built for a mid start yet. 
-        n- number of pages wanted, default 2 to return given start url and the next page extensions only.
-        
-        returns url extensions for start page (1) plus desired pages, in order
-        
-        returns n number of pages, if n=1 returns only original start page
-    
     # Remove root if included  
     domain = "https://www.tripadvisor.com"
     
@@ -291,7 +282,8 @@ def make_reviews_df(reviews, ratings, titles, location=None):
 
 
 def scrape_hotel(start_url, n=2, webdriver=None):
-    """Complete hotel review scrape from Trip Advisor.
+    """Complete hotel review scrape from Trip Advisor for a given number of pages.
+    There are five reviews per page.
 
     Args:
         start_url (str): Starting URL. Hotel homepage from Trip Advisor.
