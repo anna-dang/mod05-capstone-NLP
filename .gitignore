@@ -5,11 +5,12 @@
 .ipynb_checkpoints
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
+.ipynb_checkpoints/data_collection-checkpoint.ipynb
 
 # scratch files
 /scraper.ipynb
-.ipynb_checkpoints/data_collection-checkpoint.ipynb
+/NLP_processing_scratch.ipynb
 
 # folders
+/driver/
 driver/
-NLP_processing.ipynb
