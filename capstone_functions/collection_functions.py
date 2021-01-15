@@ -1,3 +1,6 @@
+""" This file contains functions to scrape hotel review data from Trip Advisor,
+culminating in the final 'scrape_hotel' function. 01/14/2021 """
+
 import pandas as pd
 
 from bs4 import BeautifulSoup

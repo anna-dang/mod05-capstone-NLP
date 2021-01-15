@@ -8,9 +8,15 @@
 .ipynb_checkpoints/data_collection-checkpoint.ipynb
 
 # scratch files
-/scraper.ipynb
-/NLP_processing_scratch.ipynb
+/scratch_functions.py
+scratch_functions.py
+capstone_functions/scrach_functions.py
+/capstone_functions/scrach_functions.py
+
+# API
+/mapbox_token
 
 # folders
 /driver/
 driver/
+
