@@ -4,6 +4,7 @@
 # checkpoints
 .ipynb_checkpoints
 .ipynb_checkpoints/
+/.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 .ipynb_checkpoints/data_collection-checkpoint.ipynb
 
