@@ -1,33 +1,16 @@
 """ This file contains functions to for NLP and modeling for my capstone project. 01/14/2021 """
 
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import LabelBinarizer, FunctionTransformer
 from sklearn.metrics import auc, accuracy_score, confusion_matrix, classification_report, roc_auc_score
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from wordcloud import WordCloud
 
-# # from medium
-# def preprocess_text(text):
-#     # Tokenise words while ignoring punctuation
-#     tokeniser = RegexpTokenizer(r'\w+')
-#     tokens = tokeniser.tokenize(text)
-    
-#     # Lowercase and lemmatise 
-#     lemmatiser = WordNetLemmatizer()
-#     lemmas = [lemmatiser.lemmatize(token.lower(), pos='v') for token in tokens]
-    
-#     # Remove stop words
-#     keywords= [lemma for lemma in lemmas if lemma not in stopwords.words('english')]
-#     return keywords
-# # Create an instance of TfidfVectorizer
-# vectoriser = TfidfVectorizer(analyzer=preprocess_text)
-# # Fit to the data and transform to feature matrix
-# X_train_tfidf = vectoriser.fit_transform(X_train)
-# X_train_tfidf.shape
 
-
+https://gist.github.com/jiahao87/d57a2535c2ed7315390920ea9296d79f
 
 def process_review(review):
     pass
@@ -40,7 +23,28 @@ def process_review(review):
 
 
 
-def make_cloud(df, rating=int, pattern=None, stopwords=None):
+def make_transformer(function, active=True):
+    
+    """Maps a singular function to series and returns a series compatibile with sklearn pipelines. 
+    A hacky way to bypass building tranformer via OOP and inheritance. Works for now!
+    Source: https://ryan-cranfill.github.io/sentiment-pipeline-sklearn-3/ """
+    
+    def map_function_to_list(list_or_series, active=True):
+        
+        if active:
+            
+            return [function(i) for i in list_or_series]
+        
+        else: # if it's not active, just pass it right back
+            
+            return list_or_series
+    
+    return FunctionTransformer(map_function_to_list, validate=False, kw_args={'active':active})
+
+
+
+
+def make_cloud(df, rating=int, pattern=None, stopwords=None,width=1600, height=800):
     
     if 1 <= rating <= 5:
         
@@ -54,17 +58,18 @@ def make_cloud(df, rating=int, pattern=None, stopwords=None):
     
     wordcloud = WordCloud(random_state=619, colormap='plasma', 
                           collocations=False, regexp=pattern,
-                          width=400, height=300,
-                          font_path="./driver/tommy_font.otf",
+                          width=1600, height=800,
+                          min_font_size= 20,
+                          font_path="./driver/LEMONMILK-Regular.otf",
                           background_color="white",
                           stopwords=stopwords).generate(text)
     
     return wordcloud
 
 
-
 def plot_cloud(wordcloud):
-    plt.figure(figsize=(15,10))
+
+    plt.figure(figsize=(20,10))
     plt.imshow(wordcloud, interpolation='bilinear', aspect='auto') 
     plt.axis("off");
 
@@ -72,13 +77,16 @@ def plot_cloud(wordcloud):
 
 def plot_clouds_per_rating(df, pattern=None, stopwords=None):
 
-    fig, axes = plt.subplots(3, 2, figsize=(25, 30))
+    fig, axes = plt.subplots(3, 2, figsize=(25, 20))
     fig.tight_layout(pad=0.2, w_pad=0.5, h_pad=1.2)
 
     for i, ax in zip(list(range(6, 0, -1)), axes.flatten()):
 
         if 1 <= i-1 <= 5:
-            ax.imshow(make_cloud(df, rating=(i-1), pattern=pattern, stopwords=stopwords), 
+            ax.imshow(make_cloud(df, 
+                                rating=(i-1), 
+                                pattern=pattern, 
+                                stopwords=stopwords), 
                                 interpolation="bilinear")
             ax.axis("off")
             ax.set_title(f"- - - {i-1} Stars - - -", size=25, fontweight='bold')
@@ -89,6 +97,7 @@ def plot_clouds_per_rating(df, pattern=None, stopwords=None):
 
 
 def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+
     lb = LabelBinarizer()
     lb.fit(y_test)
     y_test = lb.transform(y_test)
@@ -109,6 +118,7 @@ def evaluate_model(model, X, labels, return_preds=False, norm_type='true'):
     y_hat = model.predict(X)
    
     # Print classification report
+    report = classification_report(labels, y_hat, output_dict=True)
     print("Classification Report: \n")
     print(classification_report(labels, y_hat))
 
@@ -122,23 +132,34 @@ def evaluate_model(model, X, labels, return_preds=False, norm_type='true'):
     roc_auc = multiclass_roc_auc_score(labels, y_hat, average='macro')
     print(f"ROC/AUC: {round(roc_auc, 3)}")
 
+    # Print prediction breakdown
+    actual_counts = []
+    for key in range(1,6,1):
+        actual_counts.append(report[str(key)]['support'])
+    actual_counts = np.array(actual_counts)
+        
+    classes, pred_counts = np.unique(y_hat, return_counts=True)
+
+    preds = {'actual_count': actual_counts, 
+            'pred_count': pred_counts,
+            'diff' : pred_counts - np.array(actual_counts),
+            '%_actual': np.round(actual_counts/sum(actual_counts) * 100, decimals=2),
+            '%_pred': np.round(pred_counts/sum(pred_counts) * 100, decimals=2)}
+
+    pred_df = pd.DataFrame(preds, index=[str(i) for i in classes]).rename_axis('class')
+    display(pred_df)
+
     # Build confusion matrix
-    cm = confusion_matrix(labels, y_hat, normalize='all')
     cm_true = confusion_matrix(labels, y_hat, normalize='true')
 
-    # Set figure
-    fig, (ax1, ax2) = plt.subplots(1,2,figsize=(25, 10))
-
-    # Plot quantity distribution confusion matrix
-    sns.heatmap(cm, annot=True, fmt='.0%', cmap="BuPu", ax=ax1);
-    ax1.set(title='Distribution of Predictions',ylabel='True Class', xlabel='Predicted Class')
-    ax1.set_ylim(5.0, 0)
-
     # Plot normalized matrix (to ROWS, true values)
-    sns.heatmap(cm_true, annot=True, fmt='.0%', cmap="BuPu", ax=ax2);
-    ax2.set(title='Normalized to True Class',ylabel='True Class', xlabel='Predicted Class')
-    ax2.set_ylim(5.0, 0)
-    
+    plt.figure(figsize=(6, 6))
+    sns.heatmap(cm_true, annot=True, fmt='.0%', cmap="BuPu", square=True);
+    sns.set(font_scale=1.5)
+    plt.title('Normalized to True Class')
+    plt.ylabel('True Class')
+    plt.xlabel('Predicted Class')
+    plt.ylim(5.0, 0)
     plt.show()
 
     # If selected, return predicted labels
