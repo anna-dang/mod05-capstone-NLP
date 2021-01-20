@@ -102,7 +102,7 @@ def retrieve_location(soup):
 
 
 
-def parse_url(start_url_ext, idx, webdriver, location=False): 
+def parse_url(start_url_ext, idx, webdriver, location=False, _filter=False): 
     """Parse a Trip Advisor hotel page and scrape review information: rating, review, and 
     review title. Optional to scrape location details.
 
@@ -122,18 +122,34 @@ def parse_url(start_url_ext, idx, webdriver, location=False):
     """
     domain = "https://www.tripadvisor.com"
 
+    # Define waits, moved from stale element 'try' 1/18pm
+    ignored_exceptions = (NoSuchElementException, StaleElementReferenceException, TimeoutException)
+    wait = WebDriverWait(webdriver, 10, ignored_exceptions=ignored_exceptions)
+
     # Catch for webdriver time out
     try:
-        webdriver.get(domain + start_url_ext)
-        webdriver.implicitly_wait(5)
+        webdriver.get(domain + start_url_ext) # 1/18 reduced from 5 to 3
 
     except TimeoutException:
         pass
 
+    if _filter == True:
+        # ACTIVATE low filters to scrape only low reviews
+        try:
+            for f in [3, 2, 1]:
+                # level = f"ReviewRatingFilter_{f}"
+                # webdriver.find_element_by_id(level).click()
+                level = f"ReviewRatingFilter_{f}"
+                wait.until(EC.element_to_be_clickable((By.ID, level)))
+                webdriver.execute_script("arguments[0].click();", (webdriver.find_element_by_id(level)))
+                print(f"filter{f}")
+        except:
+            pass
+
     # Catch for webdriver stale element
     try:
-        ignored_exceptions = (NoSuchElementException, StaleElementReferenceException, TimeoutException)
-        wait = WebDriverWait(webdriver, 10, ignored_exceptions=ignored_exceptions)
+        # ignored_exceptions = (NoSuchElementException, StaleElementReferenceException, TimeoutException)
+        # wait = WebDriverWait(webdriver, 10, ignored_exceptions=ignored_exceptions)
         wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "_3maEfNCR")))
 
     except TimeoutException:
@@ -210,7 +226,7 @@ def get_url_list(start_url, n=2):
    
 
 
-def parse_url_list(url_list, webdriver=None):
+def parse_url_list(url_list, webdriver=None, _filter=False):
     """Parses a given list of Trip Advisor hotel homepages to retrieve the review data and location.
     Review data includes the review, title, and rating between 0 - 5.
 
@@ -239,13 +255,20 @@ def parse_url_list(url_list, webdriver=None):
 
         # Get location just once with parse of first url
         if idx == 0:
-            page_one_reviews, page_one_ratings, page_one_titles, location = parse_url(page, idx, webdriver=driver, location=True)
+            page_one_reviews, page_one_ratings, page_one_titles, location = parse_url(page, 
+                                                                                        idx, 
+                                                                                        webdriver=driver, 
+                                                                                        location=True,
+                                                                                        _filter=_filter)
             all_reviews.extend(page_one_reviews)
             all_ratings.extend(page_one_ratings)
             all_titles.extend(page_one_titles)
 
         else:    
-            page_reviews, page_ratings, page_titles = parse_url(page, idx, webdriver=driver)
+            page_reviews, page_ratings, page_titles = parse_url(page, 
+                                                                idx, 
+                                                                webdriver=driver,
+                                                                _filter=_filter)
             all_reviews.extend(page_reviews)
             all_ratings.extend(page_ratings)
             all_titles.extend(page_titles)
@@ -284,7 +307,7 @@ def make_reviews_df(reviews, ratings, titles, location=None):
 
 
 
-def scrape_hotel(start_url, n=2, webdriver=None):
+def scrape_hotel(start_url, n=2, webdriver=None, _filter=False):
     """Complete hotel review scrape from Trip Advisor for a given number of pages.
     There are five reviews per page.
 
@@ -303,10 +326,13 @@ def scrape_hotel(start_url, n=2, webdriver=None):
     if webdriver:
         driver = webdriver
 
-        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list, webdriver=driver)
+        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list, 
+                                                                        webdriver=driver,
+                                                                        _filter=_filter)
     
     else:
-        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list)
+        all_reviews, all_ratings, all_titles, location = parse_url_list(url_list,
+                                                                        _filter=_filter)
 
     hotel_df = make_reviews_df(all_reviews, all_ratings, all_titles, location)
     
