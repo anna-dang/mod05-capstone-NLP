@@ -166,10 +166,10 @@ def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
     return roc_auc_score(y_test, y_pred, average=average)
 
 
-def cross_val_model(model, X, y, cv=5):
+def cross_val_model(model, X, y, cv=5, scoring='recall_weighted'):
     """"weighted" accounts for class imbalance by computing the average of binary 
     metrics in which each class’s score is weighted by its presence in the true data sample."""
-    cv_scores = cross_val_score(model, X, y, cv=cv, n_jobs=1, scoring='recall_weighted')
+    cv_scores = cross_val_score(model, X, y, cv=cv, n_jobs=1, scoring=scoring)
     print(cv_scores)
     print("Recall: %0.2f (+/- %0.2f)" % (cv_scores.mean(), cv_scores.std() * 2))
 
