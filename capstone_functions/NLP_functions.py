@@ -12,30 +12,41 @@ import pandas as pd
 from wordcloud import WordCloud
 import unidecode as ud
 import nltk
+from PIL import Image
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 
 
-#https://gist.github.com/jiahao87/d57a2535c2ed7315390920ea9296d79f
 
-def process_review(review):
+def preprocess_review(text, pattern=None, stopwords=None):
     
-    review = review.lower()
-    # tokens = nltk.word_tokenize(review)
-    # stopwords_removed = [token.lower() for token in tokens if token.lower() not in stopwords_list]
+    # Lowercase and tokenize
+    if pattern:
+        
+        tokeniser = RegexpTokenizer(pattern)
+        tokens = tokeniser.tokenize(text.lower())
+        
+    else:
+        
+         tokens = word_tokenize(text.lower())
     
-    # remove special character
-    review = re.sub("([^\x00-\x7F])+"," ", review)
+    if stopwords:
+        
+        tokens = [w for w in tokens if w not in stopwords]
 
-    # Convert accents/convert utf-8 to normal text
-    review = ud.unidecode(review)
+    # Remove numbers
+    tokens = [c for c in tokens if not c.isdigit()]
 
-    return review
+    # Lemmatise 
+    lemmatiser = WordNetLemmatizer()
+    lemmas = [lemmatiser.lemmatize(token, pos='v') for token in tokens]
+    
+    return lemmas
 
-# map to data (data is form list of articles as strings...)
-#processed_data = list(map(process_review, data))
+
 
 def preprocess_review(text, pattern=None, stopwords=False):
+    
     # Tokenise words while ignoring punctuation
     tokeniser = RegexpTokenizer(r'\w+')
     tokens = tokeniser.tokenize(text)
@@ -84,28 +95,8 @@ def plot_word_frequencies(df, n=10, pattern=None, stopwords=None):
 
 
 
-def make_transformer(function, active=True):
-    
-    """Maps a singular function to series and returns a series compatibile with sklearn pipelines. 
-    A hacky way to bypass building tranformer via OOP and inheritance. Works for now!
-    Source: https://ryan-cranfill.github.io/sentiment-pipeline-sklearn-3/ """
-    
-    def map_function_to_list(list_or_series, active=True):
-        
-        if active:
-            
-            return [function(i) for i in list_or_series]
-        
-        else: # if it's not active, just pass it right back
-            
-            return list_or_series
-    
-    return FunctionTransformer(map_function_to_list, validate=False, kw_args={'active':active})
 
-
-
-
-def make_cloud(df, rating=int, pattern=None, stopwords=None,width=1600, height=800):
+def make_cloud(df, rating=int, pattern=None, stopwords=None, mask=None):
     
     if 1 <= rating <= 5:
         
@@ -123,7 +114,8 @@ def make_cloud(df, rating=int, pattern=None, stopwords=None,width=1600, height=8
                           min_font_size= 20,
                           font_path="./driver/LEMONMILK-Regular.otf",
                           background_color="white",
-                          stopwords=stopwords).generate(text)
+                          stopwords=stopwords,
+                          mask=mask).generate(text)
     
     return wordcloud
 
@@ -136,7 +128,7 @@ def plot_cloud(wordcloud):
 
 
 
-def plot_clouds_per_rating(df, pattern=None, stopwords=None):
+def plot_clouds_per_rating(df, pattern=None, stopwords=None, mask=None):
 
     fig, axes = plt.subplots(3, 2, figsize=(25, 20))
     plt.tight_layout()
@@ -147,13 +139,34 @@ def plot_clouds_per_rating(df, pattern=None, stopwords=None):
             ax.imshow(make_cloud(df, 
                                 rating=(i-1), 
                                 pattern=pattern, 
-                                stopwords=stopwords), 
+                                stopwords=stopwords,
+                                mask=mask), 
                                 interpolation="bilinear")
             ax.axis("off")
             ax.set_title(f"{i-1} Star Reviews", size=25, fontweight='bold')
 
         else:
             ax.axis('off')
+
+
+
+def transform_format(val):
+    if val == 0:
+        return 255
+    else:
+        return val
+
+
+
+def make_cloud_mask(image_path):
+    mask_array = np.array(Image.open(image_path))
+    
+    transformed_mask = np.ndarray((mask_array.shape[0], mask_array.shape[1]), np.int32)
+    
+    for i in range(len(mask_array)):
+        transformed_mask[i] = list(map(transform_format, mask_array[i]))
+        
+    return transformed_mask
 
 
 
@@ -234,6 +247,23 @@ def evaluate_model(model, X, labels, return_preds=False, norm_type='true'):
     # If selected, return predicted labels
     if return_preds == True:
         return y_hat
+
+
+
+def print_explainer(explainer, model, X_train, y_train, y_2_train, n=10, idx=0):
+    exp = explainer.explain_instance(X_train.iloc[idx], model.predict_proba, num_features=n)
+    print('Review id: %d' % idx)
+    print('User Rating:', y_train.iloc[idx])
+    print('True class: %s' % y_2_train.iloc[idx])
+    print('Probability of Flag =', model.predict_proba([X_train.iloc[idx]])[0,0])
+    print('Probability of Pass =', model.predict_proba([X_train.iloc[idx]])[0,1])
+    print("Prediction: Correct :)" if (y_2_train.iloc[idx] == model.predict([X_train.iloc[idx]])[0]) 
+          else "Prediction: Incorrect :(")
+    return exp
+
+
+
+
 
 
 
