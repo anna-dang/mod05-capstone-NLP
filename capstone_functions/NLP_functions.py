@@ -15,6 +15,7 @@ from sklearn.metrics import auc, accuracy_score, confusion_matrix, classificatio
 from sklearn.model_selection import cross_val_score
 
 import nltk
+from nltk import word_tokenize
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 
@@ -41,7 +42,7 @@ def preprocess_review(text, pattern=None, stopwords=None):
         
     else:
         
-         tokens = word_tokenize(text.lower())
+        tokens = word_tokenize(text.lower())
     
     if stopwords:
         
@@ -91,10 +92,12 @@ def plot_word_frequencies(df, n=10, pattern=None, stopwords=None):
             freq_y = [i[1] for i in freq_n.most_common(n)]
 
             # Plot word frequency
-            ax.bar(freq_x, freq_y)
+            ax.barh(freq_x, freq_y, color = 'grey')
             ax.set_title(f"{rating-1} Star Reviews", size=25, fontweight='bold')
+            plt.xlabel('Occurances', size=10)
+            plt.ylabel("Word", size=10)
             ax.set_ylabel("Frequency")
-            ax.tick_params(axis='x', labelrotation = -35)
+            ax.tick_params(axis='x', labelrotation = 0)
             
         else:
 
@@ -370,7 +373,7 @@ def print_explainer(explainer, model, X_test, y_test, y_2_test, n=10, idx=0):
         y_2_test ([type]): Assigned binary label
         n (int, optional): Number of tokens to explain. Defaults to 10.
         idx (int, optional): Index number of which entry to explain. Defaults to 0.
-        
+
     Returns:
         LimeTextExplainer explained instance: Generated from one prediction for 'n' number of 
                                                 features explained.
@@ -382,6 +385,6 @@ def print_explainer(explainer, model, X_test, y_test, y_2_test, n=10, idx=0):
     print('Probability of Flag =', model.predict_proba([X_test.iloc[idx]])[0,0])
     print('Probability of Pass =', model.predict_proba([X_test.iloc[idx]])[0,1])
     print("Prediction: Correct ✓ " if (y_2_test.iloc[idx] == model.predict([X_test.iloc[idx]])[0]) 
-          else "Prediction: Incorrect ✗"
+          else "Prediction: Incorrect ✗")
 
     return exp
