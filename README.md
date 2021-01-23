@@ -12,7 +12,7 @@ January 22nd, 2021
 
 *Natural Language Processing (NLP) - Communication Management Tool*
 
- <img alt="boy having a highly rated hotel experience" src="./images/danny.gif" width="600"/>
+ <img alt="boy having a five-star hotel experience" src="./images/danny.gif" width="600"/>
  
 ---
 
@@ -139,7 +139,7 @@ Here is an example of the feature importances of the final model uses a sample r
 
 ### Thank you!
 
-View my presentation [slideshow](/od05_presentation.pdf) and [blog](https://annadangela.medium.com/) for this project.
+Please view my presentation [slide deck](/mod05_presentation.pdf) and [blog](https://annadangela.medium.com/) for this project.
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/anna-d-angela-216b01b2/) and [Twitter](https://twitter.com/_dangelaa)!
 
