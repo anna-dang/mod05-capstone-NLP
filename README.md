@@ -12,7 +12,7 @@ January 22nd, 2021
 
 *Natural Language Processing (NLP) - Communication Management Tool*
 
- <img alt="boy having a highly rated hotel experience" src="./images/danny.gif" width="400"/>
+ <img alt="boy having a highly rated hotel experience" src="./images/danny.gif" width="600"/>
  
 ---
 
@@ -49,7 +49,7 @@ Trip Advisor hotel review web scrape to gather 22,563 reviews from 24 hotels in 
 
 Proof of concept focused on Denver metro-area to keep the sites/attractions mentioned consistent. The scoring metric is entirely up to the user. Therefore, one person's 3 could be another person's 2 or 4.
 
-<img alt="data source map" src="./images/map.png" width="400"/>
+<img alt="data source map" src="./images/map.png" />
 
 ###### Data Files
 ```
@@ -79,7 +79,7 @@ test_data.csv           # resulting test data to build collection notebook
 - 'Noise' were words appearing most frequently across all classes, thus providing no real signal
 - Lowercase and lemmatize words into tokens
 
-<img alt="word cloud" src="./images/word_clouds.png" width="400"/>
+<img alt="word cloud" src="./images/word_clouds.png" />
 
 #### Vectorizer
 TF-IDF to calculate weighted term frequency by class to convert text to a term-document matrix. A text represented as a vector of numbers that the model/computer will be able to interpret as a 'bag of words'.
@@ -107,7 +107,7 @@ Accuracy jumped up **14%** to **75%** using a ternary classification problem. I 
 
 The final model was a TF-IDF Vectorizer and Logistic Regression SGD Classifier pipeline. The pipeline was trained using the binary version of the training set resulting in predictions of "flag" or "pass". Pipeline architecture:
 
-<img alt="final model structure" src="./images/final_pipeline.png" width="400"/>
+<img alt="final model structure" src="./images/final_pipeline.png" width="600"/>
 
 *Performance:*
 
@@ -119,7 +119,7 @@ The final classifier reached **89.2%** overall testing accuracy. Recall for 'fla
 
 Here is an example of the feature importances of the final model uses a sample review.
 
-<img alt="text explainer" src="./images/text_explainer.png" width="400"/>
+<img alt="text explainer" src="./images/text_explainer.png" />
 
 ---
 
