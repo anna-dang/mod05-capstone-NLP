@@ -17,16 +17,24 @@ January 22nd, 2021
 ---
 
 ### Overview
+For the hospitality industry, reputation is everything. Guests book based on online presence and word-of-mouth.
+Negative reviews can largely impact the booking decisions of future guests. For negative guest experiences, time and care are crucial for guest recovery. Finding and attending to an unhappy guest before they post a review can change their experience, and their score.
 
-Stakeholder: A company building a filter for hotel email/social media feeds to recognize low sentiment/upset customers to flag and bring to staff attention. 
+**Stakeholder:** Denver based hospitality software company
 
-End user: Hotel/hospitality industry
+**End User:** Hotel industry guest service managers
 
-Business problem: Customer retention
+**Business Problem:** Reach dissatisfied guests quickly to increase customer retention
 
-Business solutions:
-1) Brand management: Word of mouth reputation is just as important as published reviews. Filter aims to be part of a tool to scan Twitter, Facebook, etc. for mentions of the property and flag negative messages for staff to address.
-2) Email filter: Flag emails containing negative hotel sentiment/issues and for urgent attention from staff. 
+**Business Solution:**
+*Objective*
+Build a communication management tool to flag dissatisfied guests for rapid recovery by staff
+
+*Method*
+Classify text by  sentiment using hotel review data
+
+*Success Criteria*
+Maximize recall to catch all target (negative) communication
 
 ---
 
@@ -111,13 +119,13 @@ The final model was a TF-IDF Vectorizer and Logistic Regression SGD Classifier p
 
 *Performance:*
 
-The final classifier reached **89.2%** overall testing accuracy. Recall for 'flag' reviews was **94%**, meaning only 6% of bad reviews were missed. **12%** of 'pass' reviews were incorrectly flagged. This would result in non-urgent customer retention issues being brought to attention. The drawback of this in cost of for staff time/labor can be determined by the user. The weighted F1 score for the model was **90%.** The ROC/AUC score was **0.91.** The ROC/AUC score tells how capable the model is of distinguishing between classes (with 1 being a perfect score).
+The final, binary classifier reached **89.2%** overall testing accuracy. Recall for the 'flag' class (negative reviews, 1 and 2) was **94%**, meaning only 6% of bad reviews were missed. **12%** of the 'pass' class (neutral or positive reviews, 3 to 5) were incorrectly flagged. This would result in non-urgent customer retention issues being brought to attention. The drawback of this in cost of for staff time/labor and can be determined by the user. The ROC/AUC score was **0.96.** The ROC/AUC score tells how capable the model is of distinguishing between classes (with 1 being a perfect score).
 
 <img alt="final model scores" src="./images/final_cm.png" width="400"/>
 
 *Prediction Explainer:*
 
-Here is an example of the feature importances of the final model uses a sample review.
+Here is an example of the feature importances of the final model using a sample review.
 
 <img alt="text explainer" src="./images/text_explainer.png" />
 
@@ -125,15 +133,15 @@ Here is an example of the feature importances of the final model uses a sample r
 
 ### Recommendations
 
-1. Use the binary model as a 'Needs Urgent Attention/Handle with Care' communication flagger.
-2. Use multi-class model to set an urgency (1 vs 2 vs 3), marking most negative sentiment for first attention.
-3. Expand proof of concept to other user specific location (remove location specific vocabulary).
+1. Scan guest in-house communication (emails, texts, etc.) and select social media to identify unhappy guests.
+2. Use the binary model as a 'Needs Urgent Attention/Handle with Care' communication flagger.
+3. Use multi-class model to set an urgency rank (1 vs 2 vs 3), marking most negative sentiment for first attention. 
 
 ### Future Work
 
-1. Try Scrapy for web scraping to increase speed of scrape.
-2. Explore transfer learning with pre-trained NLP models.
-3. Explore clustering/topic modeling to examine what connects ratings in this industry. Use the topics associated with negative reviews to help train the flagger to note communication with positive/neural sentiment, but a guest still needed immediate retention action.
+1. Explore transfer learning and deeper learning models to advance the 5 class model.
+2. Explore topic modeling to examine what links ratings and offer insight into the guest experience.
+3. Build app/scanner to patrol email and selected social media for each hotel.
 
 --- 
 
@@ -151,9 +159,9 @@ Connect with me on [LinkedIn](https://www.linkedin.com/in/anna-d-angela-216b01b2
 ├── images
 ├── models
 ├── capstone_functions
-│   ├── NLP_functions.py         
-│   ├── collection_functions.py       
+│   ├── NLP_functions.py                   
+│   ├── collection_functions.py         
 │   └── __init__.py        
 ├── data_collection.ipynb
-├── NLP_and_modeling.ipynb
-└── mod05_presentation.pdf
+├── NLP_and_modeling.ipynb              
+└── mod05_presentation.pdf             

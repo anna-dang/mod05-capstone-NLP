@@ -13,6 +13,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import LabelBinarizer, FunctionTransformer
 from sklearn.metrics import auc, accuracy_score, confusion_matrix, classification_report, roc_auc_score
 from sklearn.model_selection import cross_val_score
+from sklearn.utils import class_weight
 
 import nltk
 from nltk import word_tokenize
@@ -237,6 +238,44 @@ def make_cloud_mask(image_path):
 
 
 
+def set_weights(y_train, ret_class=False):
+    """Compute class weights for a given target column. Use class weights to
+    calculate sample weights for use in Bayesian modeling with Sci-Kit Learn.
+
+    Prints a preview of the generated weights and corresponding classes.
+
+    Args:
+        y_train (list or Series): The target/class data for model.
+        ret_class (bool, optional): Whether to return class weights also. Defaults to False.
+
+    Returns:
+        np.array: Array of sample weights, one per sample in y_train.
+
+    """
+    # Set training weights to balance classes
+    class_weights = class_weight.compute_class_weight(class_weight = 'balanced', 
+                                                    classes = np.unique(y_train), 
+                                                    y = y_train)
+
+    c_weights_dict = dict(zip(np.unique(y_train), class_weights))
+    print("Class Weights:", len(class_weights), "classes")
+    display(c_weights_dict)
+
+    # For MultiNomial Naive Bayes - sample weights are required
+    sample_weights = class_weight.compute_sample_weight(c_weights_dict, y = y_train)
+    print("Sample Weights:", len(sample_weights), "samples")
+    display(sample_weights)
+
+    if ret_class:
+
+        return class_weights, sample_weights
+    
+    else:
+
+        return sample_weights
+
+
+
 def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
     """Compute the multi-class 'Area Under Curve' from a ROC Curve by
     binarizing labels and predictions - reformating each class score
@@ -278,6 +317,7 @@ def cross_val_model(model, X, y, cv=5, scoring='recall_weighted'):
     cv_scores = cross_val_score(model, X, y, cv=cv, n_jobs=1, scoring=scoring)
     print(cv_scores)
     print("Recall: %0.2f (+/- %0.2f)" % (cv_scores.mean(), cv_scores.std() * 2))
+
 
 
 def evaluate_model(model, X, labels, return_preds=False, norm_type='true'):
