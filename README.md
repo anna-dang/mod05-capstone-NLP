@@ -43,9 +43,9 @@ Maximize recall to catch all target (negative) communication
 ### Skills Demonstrated
 
 - Webscraping: BeautifulSoup, Selenium
-- EDA: Pandas, Plotly, World Cloud, 
+- EDA: Pandas, Plotly, World Cloud
 - NLP: NLTK, LIME
-- Classification: Sci-Kit Learn pipelines - Logistic Regression, Naive Bayes, Stochastic Gradient Descent
+- Classification: Sci-Kit Learn pipelines - Logistic Regression, Naive Bayes
 
 ### Data
 
