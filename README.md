@@ -27,13 +27,17 @@ Negative reviews can largely impact the booking decisions of future guests. For 
 **Business Problem:** Reach dissatisfied guests quickly to increase customer retention
 
 **Business Solution:**
+
 *Objective*
+
 Build a communication management tool to flag dissatisfied guests for rapid recovery by staff
 
 *Method*
+
 Classify text by  sentiment using hotel review data
 
 *Success Criteria*
+
 Maximize recall to catch all target (negative) communication
 
 ---
