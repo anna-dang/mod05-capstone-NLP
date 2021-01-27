@@ -42,10 +42,10 @@ Maximize recall to catch all target (negative) communication
 
 ### Skills Demonstrated
 
-- Webscraping: BeautifulSoup, Selenium
+- Web Scraping: BeautifulSoup, Selenium
 - EDA: Pandas, Plotly, World Cloud, 
 - NLP: NLTK, LIME
-- Classification: Sci-Kit Learn pipelines - Logistic Regression, Naive Bayes, Stochastic Gradient Descent
+- Classification: Scikit-Learn pipelines - Logistic Regression, Naive Bayes, Stochastic Gradient Descent
 
 ### Data
 
@@ -147,7 +147,7 @@ Here is an example of the feature importances of the final model using a sample 
 
 ### Thank you!
 
-Please view my presentation [slide deck](/mod05_presentation.pdf) and [blog](https://annadangela.medium.com/) for this project.
+Please view my presentation [slide deck](/mod05_presentation.pdf) and [blog](https://annadangela.medium.com/why-weight-the-importance-of-balanced-datasets-3f8ee0297b9c) for this project.
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/anna-d-angela-216b01b2/) and [Twitter](https://twitter.com/_dangelaa)!
 

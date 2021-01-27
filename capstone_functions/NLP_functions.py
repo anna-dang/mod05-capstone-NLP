@@ -238,35 +238,41 @@ def make_cloud_mask(image_path):
 
 
 
-def set_weights(y_train, ret_class=False):
-    """Compute class weights for a given target column. Use class weights to
-    calculate sample weights for use in Bayesian modeling with Sci-Kit Learn.
-
-    Prints a preview of the generated weights and corresponding classes.
+def set_weights(y_train, weight = 'balanced', return_class = False, verbose = True):
+    """Compute class weights for a given target column. Generate array of sample 
+    weights. Optionally, prints a preview of the generated weights and classes.
 
     Args:
         y_train (list or Series): The target/class data for model.
-        ret_class (bool, optional): Whether to return class weights also. Defaults to False.
+        weight (str): Type of class balancing to calculate. Defaults to 'balanced'.
+        return_class (bool, optional): Whether to return class weights also. 
+                                        Defaults to False.
+        verbose (bool, optional): Prints dict of classes and weights, previews 
+                                        sample weights. Defaults to True.
 
     Returns:
         np.array: Array of sample weights, one per sample in y_train.
-
+        dict (optional) : keys = classes in target, values = weights
     """
-    # Set training weights to balance classes
-    class_weights = class_weight.compute_class_weight(class_weight = 'balanced', 
+    # Calculate weight per class based upon a specificed distribution of target classes
+    class_weights = class_weight.compute_class_weight(class_weight = weight, 
                                                     classes = np.unique(y_train), 
                                                     y = y_train)
 
     c_weights_dict = dict(zip(np.unique(y_train), class_weights))
-    print("Class Weights:", len(class_weights), "classes")
-    display(c_weights_dict)
-
-    # For MultiNomial Naive Bayes - sample weights are required
+    
+    # Assign associated class weight to each sample, returns an array of sample length
     sample_weights = class_weight.compute_sample_weight(c_weights_dict, y = y_train)
-    print("Sample Weights:", len(sample_weights), "samples")
-    display(sample_weights)
 
-    if ret_class:
+    if verbose:
+
+        print("Class Weights:", len(class_weights), "classes")
+        display(c_weights_dict)
+
+        print("Sample Weights:", len(sample_weights), "samples")
+        display(sample_weights)
+
+    if return_class:
 
         return class_weights, sample_weights
     
