@@ -27,13 +27,17 @@ Negative reviews can largely impact the booking decisions of future guests. For 
 **Business Problem:** Reach dissatisfied guests quickly to increase customer retention
 
 **Business Solution:**
+
 *Objective*
+
 Build a communication management tool to flag dissatisfied guests for rapid recovery by staff
 
 *Method*
+
 Classify text by  sentiment using hotel review data
 
 *Success Criteria*
+
 Maximize recall to catch all target (negative) communication
 
 ---
@@ -42,10 +46,17 @@ Maximize recall to catch all target (negative) communication
 
 ### Skills Demonstrated
 
+<<<<<<< HEAD
 - Web Scraping: BeautifulSoup, Selenium
 - EDA: Pandas, Plotly, World Cloud, 
 - NLP: NLTK, LIME
 - Classification: Scikit-Learn pipelines - Logistic Regression, Naive Bayes, Stochastic Gradient Descent
+=======
+- Webscraping: BeautifulSoup, Selenium
+- EDA: Pandas, Plotly, World Cloud
+- NLP: NLTK, LIME
+- Classification: Sci-Kit Learn pipelines - Logistic Regression, Naive Bayes
+>>>>>>> a96f03f563afedea11d510cf8734558940c2aab5
 
 ### Data
 
