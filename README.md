@@ -129,11 +129,16 @@ Here is an example of the feature importances of the final model using a sample 
 
 ---
 
-## Next Steps
-
 ### Heroku App: Try it Yourself! 
 
-Input a hotel review into this project's [heroku app](https://dangela-review-app.herokuapp.com/predict). Get a preview of how the communication tool would predict a review score, as well as the 'flag' or 'pass' status. The code for the app is in my [review_app](https://github.com/anna-dang/review_app) repo.
+Follow this link to connect to the Hotel Review Classifier [Heroku App](https://dangela-review-app.herokuapp.com/predict) developed from this project. The app will function as a demonstration of how the communication tool will perform.
+
+Input a hotel review and click predict. The app will return a 'flag' or 'pass' status. Meaning: whether the review is 'flagged' for immediate guest recovery or if it 'passes' and can be left for regular attention. The app also returns a predicted review numerical score.
+
+The code for the app is in my [review_app](https://github.com/anna-dang/review_app) repository.
+
+___
+
 
 ### Recommendations
 
@@ -152,6 +157,8 @@ Input a hotel review into this project's [heroku app](https://dangela-review-app
 ### Thank you!
 
 Please view my [presentation](https://docs.google.com/presentation/d/1RRYsUs9rEWzMNWBq15tbA3YPxuJFMx6x2mFG-c_z_z4/present?slide=id.gb40562cf50_0_345) and [blog](https://annadangela.medium.com/) for this project.
+
+Be sure to try the Hotel Review Classifier [Heroku App](https://dangela-review-app.herokuapp.com/predict)!
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/anna-d-angela-216b01b2/) and [Twitter](https://twitter.com/_dangelaa)!
 
