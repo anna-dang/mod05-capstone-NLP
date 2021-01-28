@@ -16,7 +16,7 @@ January 22nd, 2021
  
 ---
 
-### Overview
+## Overview
 For the hospitality industry, reputation is everything. Guests book based on online presence and word-of-mouth.
 Negative reviews can largely impact the booking decisions of future guests. For negative guest experiences, time and care are crucial for guest recovery. Finding and attending to an unhappy guest before they post a review can change their experience, and their score.
 
@@ -28,17 +28,11 @@ Negative reviews can largely impact the booking decisions of future guests. For 
 
 **Business Solution:**
 
-*Objective*
+*Objective*: Build a communication management tool to flag dissatisfied guests for rapid recovery by staff
 
-Build a communication management tool to flag dissatisfied guests for rapid recovery by staff
+*Method*: Classify text by  sentiment using hotel review data
 
-*Method*
-
-Classify text by  sentiment using hotel review data
-
-*Success Criteria*
-
-Maximize recall to catch all target (negative) communication
+*Success Criteria*: Maximize recall to catch all target (negative) communication
 
 ---
 
@@ -135,6 +129,12 @@ Here is an example of the feature importances of the final model using a sample 
 
 ---
 
+## Next Steps
+
+### Heroku App: Try it Yourself! 
+
+Input a hotel review into this project's [heroku app](https://dangela-review-app.herokuapp.com/predict). Get a preview of how the communication tool would predict a review score, as well as the 'flag' or 'pass' status. The code for the app is in my [review_app](https://github.com/anna-dang/review_app) repo.
+
 ### Recommendations
 
 1. Scan guest in-house communication (emails, texts, etc.) and select social media to identify unhappy guests.
@@ -151,7 +151,7 @@ Here is an example of the feature importances of the final model using a sample 
 
 ### Thank you!
 
-Please view my presentation [slide deck](/mod05_presentation.pdf) and [blog](https://annadangela.medium.com/) for this project.
+Please view my [presentation](https://docs.google.com/presentation/d/1RRYsUs9rEWzMNWBq15tbA3YPxuJFMx6x2mFG-c_z_z4/present?slide=id.gb40562cf50_0_345) and [blog](https://annadangela.medium.com/) for this project.
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/anna-d-angela-216b01b2/) and [Twitter](https://twitter.com/_dangelaa)!
 
